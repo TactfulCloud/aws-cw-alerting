@@ -12,7 +12,7 @@ env:
   ACCESS_KEY: ${{ secrets.SUPPORT_DELIVER_ID }}
   SECRET_KEY: ${{ secrets.SUPPORT_DELIVER_SECRET }}
   SRC_DIR: 'cloudformation'
-  DEST_DIR: ${{github.event.repository.name}}
+  DEST_DIR: 'cw-alerting' #${{github.event.repository.name}}
   CHECK_DIR: 'cloudformation'
 
 jobs:
