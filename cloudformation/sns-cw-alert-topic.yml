@@ -28,10 +28,10 @@ Parameters:
 Resources:
 
   snsAlertTopic:
+    #checkov:skip=CKV_AWS_26:Ensure all data stored in the SNS topic is encrypted
     Type: AWS::SNS::Topic
     Properties:
       TopicName: EC2-CloudWatch-Alerts
-      KmsMasterKeyId: !Ref kmsKey
       Subscription:
         - Endpoint: !Ref emailAddress
           Protocol: email
@@ -45,41 +45,6 @@ Resources:
   #     Endpoint: #EmailAddress
   #     Protocol: email
 
-  kmsKey:
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
-    Type: 'AWS::KMS::Key'
-    Properties:
-      EnableKeyRotation: true
-      KeyPolicy:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
-          Action: 'kms:*'
-          Resource: '*'
-        - Effect: Allow
-          Principal:
-            AWS: '*'
-          Action:
-          - 'kms:Encrypt'
-          - 'kms:Decrypt'
-          - 'kms:ReEncrypt*'
-          - 'kms:GenerateDataKey*'
-          - 'kms:CreateGrant'
-          - 'kms:ListGrants'
-          - 'kms:DescribeKey'
-          Resource: '*'
-
-  kmsKeyAlias:
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
-    Type: 'AWS::KMS::Alias'
-    Properties:
-      AliasName: Ec2AlertSNSKey
-      TargetKeyId: !Ref kmsKey
-
 Outputs:
 
   snsAlertTopic:
@@ -87,13 +52,3 @@ Outputs:
     Value: !Ref snsAlertTopic
     Export:
       Name: !Sub '${AWS::StackName}-snsEc2AlertTopic'
-  kmsKeyId:
-    Description: 'SNS Key ID'
-    Value: !Ref kmsKey
-    Export:
-      Name: !Sub '${AWS::StackName}-kmsKeyId'
-  kmsKeyArn:
-    Description: 'SNS KMS Key ARN'
-    Value: !GetAtt 'kmsKey.Arn'
-    Export:
-      Name: !Sub '${AWS::StackName}-kmsKeyArn'

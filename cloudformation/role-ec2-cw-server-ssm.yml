@@ -27,7 +27,7 @@ Resources:
   profileBaseEc2:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: ec2-cw-server-ssm
+      InstanceProfileName: !Ref roleBaseEc2
       Path: /
       Roles:
       - !Ref roleBaseEc2
