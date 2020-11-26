@@ -47,6 +47,11 @@ Resources:
 
   kmsKey:
     #checkov:skip=CKV_AWS_33:Ensure KMS key policy does not contain wildcard (*) principal
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F1000
+            reason: KMS key should not allow * principal
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Type: 'AWS::KMS::Key'
