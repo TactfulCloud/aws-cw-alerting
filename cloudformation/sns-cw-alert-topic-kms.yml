@@ -42,20 +42,20 @@ Resources:
   #   Type: AWS::SNS::Topic
   #   Properties:
   #     TopicArn: !Ref snsAlertTopic
-  #     Endpoint: #EmailAddress
+  #     Endpoint: EmailAddress
   #     Protocol: email
 
   kmsKey:
-    #checkov:skip=CKV_AWS_33:Ensure KMS key policy does not contain wildcard (*) principal
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: F1000
+          - id: F76
             reason: KMS key should not allow * principal
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Type: 'AWS::KMS::Key'
     Properties:
+      #checkov:skip=CKV_AWS_33:Ensure KMS key policy does not contain wildcard (*) principal
       EnableKeyRotation: true
       KeyPolicy:
         Version: '2012-10-17'

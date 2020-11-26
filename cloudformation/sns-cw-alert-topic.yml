@@ -28,9 +28,9 @@ Parameters:
 Resources:
 
   snsAlertTopic:
-    #checkov:skip=CKV_AWS_26:Ensure all data stored in the SNS topic is encrypted
     Type: AWS::SNS::Topic
     Properties:
+      #checkov:skip=CKV_AWS_26:Ensure all data stored in the SNS topic is encrypted
       TopicName: EC2-CloudWatch-Alerts
       Subscription:
         - Endpoint: !Ref emailAddress
@@ -42,7 +42,7 @@ Resources:
   #   Type: AWS::SNS::Topic
   #   Properties:
   #     TopicArn: !Ref snsAlertTopic
-  #     Endpoint: #EmailAddress
+  #     Endpoint: EmailAddress
   #     Protocol: email
 
 Outputs:
