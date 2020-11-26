@@ -46,6 +46,7 @@ Resources:
   #     Protocol: email
 
   kmsKey:
+    Type: 'AWS::KMS::Key'
     Metadata:
       cfn_nag:
         rules_to_suppress:
@@ -53,7 +54,6 @@ Resources:
             reason: KMS key should not allow * principal
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
-    Type: 'AWS::KMS::Key'
     Properties:
       #checkov:skip=CKV_AWS_33:Ensure KMS key policy does not contain wildcard (*) principal
       EnableKeyRotation: true
