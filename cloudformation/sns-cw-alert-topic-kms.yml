@@ -1,0 +1,105 @@
+## Tactful Cloud Resource Template (http://tactful.cloud)
+## Developer: @rosswickman (ross@tactful.cloud)
+## Resource Provisioned: SNS Topic with Subscription
+## Description: Topic to be used for sending CloudWatch Alerts
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: SNS Topic & Email Subscription for CloudWatch Alerts
+
+Metadata:
+
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Notification Configuration
+        Parameters:
+          - emailAddress
+
+    ParameterLabels:
+      emailAddress:
+        default: Email Address
+
+Parameters:
+
+  emailAddress:
+    Type: String
+    Description: Primary Email address for all subscriptions
+
+Resources:
+
+  snsAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: EC2-CloudWatch-Alerts
+      KmsMasterKeyId: !Ref kmsKey
+      Subscription:
+        - Endpoint: !Ref emailAddress
+          Protocol: email
+
+  ## use this for adding additional email subscriptions to this topic
+  ## give a unique resource name for each additional subscription
+  # snsTopicSubscription:
+  #   Type: AWS::SNS::Topic
+  #   Properties:
+  #     TopicArn: !Ref snsAlertTopic
+  #     Endpoint: EmailAddress
+  #     Protocol: email
+
+  kmsKey:
+    Type: 'AWS::KMS::Key'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F76
+            reason: KMS key should not allow * principal
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      #checkov:skip=CKV_AWS_33:Ensure KMS key policy does not contain wildcard (*) principal
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+          Action: 'kms:*'
+          Resource: '*'
+        - Effect: Allow
+          Principal:
+            AWS: '*'
+          Action:
+          - 'kms:Encrypt'
+          - 'kms:Decrypt'
+          - 'kms:ReEncrypt*'
+          - 'kms:GenerateDataKey*'
+          - 'kms:CreateGrant'
+          - 'kms:ListGrants'
+          - 'kms:DescribeKey'
+          Resource: '*'
+
+  kmsKeyAlias:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Type: 'AWS::KMS::Alias'
+    Properties:
+      AliasName: 'alias/Ec2AlertSNSKey'
+      TargetKeyId: !Ref kmsKey
+
+Outputs:
+
+  snsAlertTopic:
+    Description: 'SNS Alert Topic'
+    Value: !Ref snsAlertTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-snsEc2AlertTopic'
+  kmsKeyId:
+    Description: 'SNS Key ID'
+    Value: !Ref kmsKey
+    Export:
+      Name: !Sub '${AWS::StackName}-kmsKeyId'
+  kmsKeyArn:
+    Description: 'SNS KMS Key ARN'
+    Value: !GetAtt 'kmsKey.Arn'
+    Export:
+      Name: !Sub '${AWS::StackName}-kmsKeyArn'

@@ -1,0 +1,69 @@
+---
+name: Production Workflow
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  REGION: 'us-east-1'
+  BUCKET: ${{ secrets.SOLUTIONS_BUCKET }}
+  ACCESS_KEY: ${{ secrets.SUPPORT_DELIVER_ID }}
+  SECRET_KEY: ${{ secrets.SUPPORT_DELIVER_SECRET }}
+  SRC_DIR: 'cloudformation'
+  DEST_DIR: ${{github.event.repository.name}}
+  CHECK_DIR: 'cloudformation'
+
+jobs:
+  superlinter:
+    runs-on: ubuntu-latest
+    env:
+      RUN_LOCAL: true
+    name: Super-Linter
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+      - name: Run Superlinter
+        id: superlinter
+        uses: github/super-linter@v3.13.2
+
+  checkov:
+    runs-on: ubuntu-latest
+    name: Checkov
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+      - name: Run Checkov action
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ${{ env.CHECK_DIR }}
+          quiet: true
+
+  cfn-nag:
+    if: always()
+    runs-on: ubuntu-latest
+    name: Cfn-Nag
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: CFN-NAG
+        uses: stelligent/cfn_nag@master
+        with:
+          input_path: ${{ env.CHECK_DIR }}
+
+  deliver:
+    name: Deliver
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --delete
+      env:
+        AWS_S3_BUCKET: ${{ env.BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ env.ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ env.SECRET_KEY }}
+        AWS_REGION: ${{ env.REGION }}
+        SOURCE_DIR: ${{ env.SRC_DIR }}
+        DEST_DIR: ${{ env.DEST_DIR }}
