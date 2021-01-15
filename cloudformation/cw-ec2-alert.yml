@@ -57,7 +57,7 @@ Resources:
       Period: 60
       EvaluationPeriods: 2
       Threshold: 1
-      ComparisonOperator: LowerThanThreshold
+      ComparisonOperator: GreaterThanOrEqualToThreshold
       Dimensions:
       - Name: InstanceId
         Value: !Ref ec2InstanceId
