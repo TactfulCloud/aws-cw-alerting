@@ -1,0 +1,84 @@
+{
+    "widgets": [
+        {
+            "type": "alarm",
+            "x": 0,
+            "y": 9,
+            "width": 24,
+            "height": 2,
+            "properties": {
+                "title": "Server 1 Status",
+                "alarms": [
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - Status Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - CPU Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - Memory Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - Disk Space Alarm"
+                ]
+            }
+        },
+        {
+            "type": "alarm",
+            "x": 0,
+            "y": 6,
+            "width": 24,
+            "height": 3,
+            "properties": {
+                "title": "Server 1 Status",
+                "alarms": [
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - Status Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - CPU Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - Memory Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-1 - Disk Space Alarm"
+                ]
+            }
+        },
+        {
+            "type": "alarm",
+            "x": 0,
+            "y": 4,
+            "width": 24,
+            "height": 2,
+            "properties": {
+                "title": "Server 2 Status",
+                "alarms": [
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-2 - Status Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-2 - CPU Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-2 - Memory Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-2 - Disk Space Alarm"
+                ]
+            }
+        },
+        {
+            "type": "alarm",
+            "x": 0,
+            "y": 2,
+            "width": 24,
+            "height": 2,
+            "properties": {
+                "title": "Server 3 Status",
+                "alarms": [
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-3 - Status Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-3 - CPU Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-3 - Memory Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-3 - Disk Space Alarm"
+                ]
+            }
+        },
+        {
+            "type": "alarm",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 2,
+            "properties": {
+                "title": "Server 4 Status",
+                "alarms": [
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-4 - Status Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-4 - CPU Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-4 - Memory Alarm",
+                    "arn:aws:cloudwatch:us-west-2:966684637003:alarm:server-4 - Disk Space Alarm"
+                ]
+            }
+        }
+    ]
+  }

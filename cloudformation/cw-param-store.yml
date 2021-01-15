@@ -1,0 +1,84 @@
+## Tactful Cloud Resource Template (http://tactful.cloud)
+## Developer: @rosswickman (ross@tactful.cloud)
+## Resource Provisioned: SSM Param with CloudWatch Agent Config
+## Description: This template deploys a CloudWatch Configuration and
+## stores it in SSM Param Store to be used by SSM Run Command
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SSM Parameter - CloudWatch Configuration
+
+Metadata:
+
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Configuration Info
+        Parameters:
+          - configName
+      - Label:
+          default: Metric Details
+        Parameters:
+          - cloudwatchNamespace
+
+    ParameterLabels:
+      configName:
+        default: Configuration Name
+      cloudwatchNamespace:
+        default: Custom CloudWatch Namespace
+
+Parameters:
+
+  configName:
+    Type: String
+    Description: "Name for configuration file in SSM Parameter Store (tip: reference Namespace)"
+    Default: CustomCWConfig
+  cloudwatchNamespace:
+    Type: String
+    Description: Namespace for collecting all logs with these metrics (i.e. environment, application tier, etc.)
+    Default: CWAgent
+
+Resources:
+    cloudwatchConfigParameter:
+        Type: AWS::SSM::Parameter
+        Properties:
+            Name: !Sub configName
+            Description: Parameter for the configuration of CloudWatch Logs
+            Type: String
+            Value:
+                !Sub |
+                {
+                    "agent": {
+                        "metrics_collection_interval": 60
+                    },
+                    "metrics": {
+                        "namespace": "${cloudwatchNamespace}",
+                        "append_dimensions": {
+                            "ImageId": "${!aws:ImageId}",
+                            "InstanceId": "${!aws:InstanceId}",
+                            "InstanceType": "${!aws:InstanceType}"
+                        },
+                        "metrics_collected": {
+                            "disk": {
+                                "measurement": [
+                                    "used_percent"
+                                ],
+                                "metrics_collection_interval": 60,
+                                "resources": [
+                                    "*"
+                                ],
+                                "ignore_file_system_types": [
+                                    "tmpfs",
+                                    "devtmpfs",
+                                    "sysfs",
+                                    "squashfs"
+                                ]
+                            },
+                            "mem": {
+                                "measurement": [
+                                    "used_percent"
+                                ],
+                                "metrics_collection_interval": 60
+                            }
+                        }
+                    }
+                }
