@@ -8,7 +8,7 @@ on:
       - '!master'
 
 env:
-  CHECK_DIR: '.'
+  CHECK_DIR: 'cloudformation'
 
 jobs:
   superlinter:

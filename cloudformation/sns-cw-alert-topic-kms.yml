@@ -2,6 +2,7 @@
 ## Developer: @rosswickman (ross@tactful.cloud)
 ## Resource Provisioned: SNS Topic with Subscription
 ## Description: Topic to be used for sending CloudWatch Alerts
+## Topic leverages KMS for encryption to meet cfn-nag security requirements
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 Description: SNS Topic & Email Subscription for CloudWatch Alerts

@@ -2,6 +2,7 @@
 ## Developer: @rosswickman (ross@tactful.cloud)
 ## Resource Provisioned: SNS Topic with Subscription
 ## Description: Topic to be used for sending CloudWatch Alerts
+## Does not use KMS for encryption
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 Description: SNS Topic & Email Subscription for CloudWatch Alerts
@@ -14,16 +15,25 @@ Metadata:
           default: Notification Configuration
         Parameters:
           - emailAddress
+          - ogApiKey
 
     ParameterLabels:
       emailAddress:
         default: Email Address
+      ogApiKey:
+        default: OpsGenie API Key
 
 Parameters:
 
   emailAddress:
     Type: String
     Description: Primary Email address for all subscriptions
+    Default: monitor@completeflight.com
+
+  ogApiKey:
+    Type: String
+    Description: Primary Email address for all subscriptions
+    Default: e3cfd782-4bce-481e-be8f-cfb9bfc2daf7
 
 Resources:
 
@@ -32,18 +42,20 @@ Resources:
     Properties:
       #checkov:skip=CKV_AWS_26:Ensure all data stored in the SNS topic is encrypted
       TopicName: EC2-CloudWatch-Alerts
-      Subscription:
-        - Endpoint: !Ref emailAddress
-          Protocol: email
 
-  ## use this for adding additional email subscriptions to this topic
-  ## give a unique resource name for each additional subscription
-  # snsTopicSubscription:
-  #   Type: AWS::SNS::Topic
-  #   Properties:
-  #     TopicArn: !Ref snsAlertTopic
-  #     Endpoint: EmailAddress
-  #     Protocol: email
+  snsEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Ref emailAddress
+      Protocol: email
+      TopicArn: !Ref 'snsAlertTopic'
+
+  snsOgSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Sub 'https://api.opsgenie.com/v1/json/cloudwatch?apiKey=${ogApiKey}'
+      Protocol: https
+      TopicArn: !Ref 'snsAlertTopic'
 
 Outputs:
 

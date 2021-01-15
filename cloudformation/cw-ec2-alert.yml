@@ -1,0 +1,127 @@
+## Tactful Cloud Resource Template (http://tactful.cloud)
+## Developer: @rosswickman (ross@tactful.cloud)
+## Resource Provisioned: CloudWatch Alert
+## Description: Deploys a CW Alert for a single instance with customizable metrics
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudWatch Alarm for EC2 Instance
+
+Metadata:
+
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Instance Details
+        Parameters:
+          - ec2InstanceId
+          - ec2InstanceName
+
+      - Label:
+          default: Alert Details
+        Parameters:
+          - snsTopicArn
+
+    ParameterLabels:
+      ec2InstanceId:
+        default: Instance ID
+      ec2InstanceName:
+        default: Instance Name
+      snsTopicArn:
+        default: SNS Topic ARN
+
+Parameters:
+
+  ec2InstanceId:
+    Type: AWS::EC2::Instance::Id
+    Description: ID of EC2 instance to monitor
+
+  ec2InstanceName:
+    Type: String
+    Description: Name of Instance to Alarm Label
+
+  snsTopicArn:
+    Type: String
+    Description: ARN of the SNS topic to send alerts to.
+    Default: "Paste ARN Here"
+
+Resources:
+
+  alarmEc2Status:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ec2InstanceName} - Status Alarm'
+      AlarmDescription: Status Alarm
+      MetricName: StatusCheckFailed
+      Namespace: AWS/EC2
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+      - Name: InstanceId
+        Value: !Ref ec2InstanceId
+      AlarmActions:
+        - !Ref snsTopicArn
+      OKActions:
+        - !Ref snsTopicArn
+
+  alarmEc2CpuPercent:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ec2InstanceName} - CPU Alarm'
+      AlarmDescription: CPU Alarm
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+      - Name: InstanceId
+        Value: !Ref ec2InstanceId
+      AlarmActions:
+        - !Ref snsTopicArn
+      OKActions:
+        - !Ref snsTopicArn
+
+  alarmEc2MemUsedPercent:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ec2InstanceName} - Memory Alarm'
+      AlarmDescription: Memory Used Percent Alarm
+      MetricName: mem_used_percent
+      Namespace: Custom/CWAgent
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+      - Name: InstanceId
+        Value: !Ref ec2InstanceId
+      AlarmActions:
+        - !Ref snsTopicArn
+      OKActions:
+        - !Ref snsTopicArn
+
+  alarmEc2DiskUsedPercent:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ec2InstanceName} - Disk Space Alarm'
+      AlarmDescription: Disk Space Used Percent Alarm
+      MetricName: disk_used_percent
+      Namespace: Custom/CWAgent
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+      - Name: InstanceId
+        Value: !Ref ec2InstanceId
+      AlarmActions:
+        - !Ref snsTopicArn
+      OKActions:
+        - !Ref snsTopicArn
