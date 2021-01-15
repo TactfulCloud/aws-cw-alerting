@@ -41,7 +41,7 @@ Resources:
     cloudwatchConfigParameter:
         Type: AWS::SSM::Parameter
         Properties:
-            Name: !Sub configName
+            Name: !Ref configName
             Description: Parameter for the configuration of CloudWatch Logs
             Type: String
             Value:
